@@ -1,4 +1,4 @@
-## GoIT Node.js Course Template Homework
+## Node.js Course Template
 
 Для каждой работы создавайте свою ветку.
 
