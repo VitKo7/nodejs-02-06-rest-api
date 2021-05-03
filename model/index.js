@@ -1,5 +1,6 @@
 const fs = require("fs").promises;
 const path = require("path");
+const contactSchema = require("./contactSchema");
 
 // const contacts = require("./contacts.json"); // ! и как его использовать?
 
@@ -47,49 +48,73 @@ const removeContact = async (contactId) => {
 
     await fs.writeFile(contactsPath, JSON.stringify(filteredContacts));
 
-    return filteredContacts;
+    return filteredContacts; // ! если такого id нет, возвращает json с ключом "message": "Not found" и статусом 404
   } catch (error) {
     console.log(error.message);
   }
 };
 
 const addContact = async (body) => {
-  try {
-    const list = await fs.readFile(contactsPath, "utf8");
-    const result = JSON.parse(list.toString());
+  const validData = await contactSchema.isValid(body);
 
-    const lastId = result[result.length - 1].id;
+  if (!validData) {
+    const notValid = {
+      message:
+        "required fields are not correct type or missing, check them, please",
+    };
+    return notValid;
+  } else {
+    try {
+      const list = await fs.readFile(contactsPath, "utf8");
+      const result = JSON.parse(list.toString());
 
-    const addedContact = [...result, { id: lastId + 1, ...body }];
+      const lastId = result[result.length - 1].id;
 
-    await fs.writeFile(contactsPath, JSON.stringify(addedContact));
+      const addedContact = [...result, { id: lastId + 1, ...body }];
 
-    return addedContact;
-  } catch (error) {
-    console.log(eror.message);
+      await fs.writeFile(contactsPath, JSON.stringify(addedContact));
+
+      return addedContact;
+    } catch (error) {
+      console.log(eror.message);
+    }
   }
 };
 
 const updateContact = async (contactId, body) => {
-  try {
-    const list = await fs.readFile(contactsPath, "utf8");
-    const result = JSON.parse(list.toString());
+  const validData = await contactSchema.isValid(body);
 
-    const oneContactToUpdate = result.find((item) => item.id == contactId);
-    const updatedContact = { ...oneContactToUpdate, ...body };
-
-    const index = oneContactToUpdate.id;
-    const updatedList = {
-      ...result.slice(0, index),
-      ...updatedContact,
-      ...result.slice(index + 1),
+  if (!validData) {
+    const notValid = {
+      message:
+        "required fields are not correct type or missing, check them, please",
     };
+    return notValid;
+  } else {
+    try {
+      const list = await fs.readFile(contactsPath, "utf8");
+      const result = JSON.parse(list.toString());
 
-    await fs.writeFile(contactsPath, JSON.stringify(updatedList));
+      const oneContactToUpdate = result.find((item) => item.id == contactId);
+      console.log(oneContactToUpdate);
+      const updatedContact = { ...oneContactToUpdate, ...body };
+      console.log(updatedContact);
 
-    return updatedContact;
-  } catch (error) {
-    console.log(error.message);
+      // const index = oneContactToUpdate.id;
+
+      // const updatedList = [
+      //   ...result.slice(0, index),
+      //   ...updatedContact,
+      //   ...result.slice(index + 1),
+      // ];
+      const updatedList = [...result, ...updatedContact];
+      console.log(updatedList); // ! (((*)))
+      await fs.writeFile(contactsPath, JSON.stringify(updatedList));
+
+      return updatedList;
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 };
 
