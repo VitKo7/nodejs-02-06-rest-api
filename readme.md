@@ -31,4 +31,4 @@
 
 -   data validation: POST: name: number instead of "" - not ok; phone: "" instead of number - not ok; email checking - ok => need to use RegEx!
 
--   updateContact() - was simplified!
+-   updateContact() - was simplified;
