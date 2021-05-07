@@ -1,24 +1,148 @@
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
+const contacts = require('../../model/index');
+
+const checkIdAvailiable = async (req) => {
+    const { contactId } = req.params;
+    const result = await contacts.getContactById(contactId);
+    return result;
+};
 
 router.get('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+    try {
+        const result = await contacts.listContacts();
+        return res.json({
+            status: 'success',
+            code: 200,
+            data: {
+                result,
+            },
+        });
+    } catch (e) {
+        console.error(e.message);
+        next(e);
+    }
+});
 
 router.get('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+    try {
+        // const { contactId } = req.params;
+        // const result = await contacts.getContactById(contactId);
 
-router.post('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+        const result = await checkIdAvailiable(req);
+
+        if (!result) {
+            res.json({
+                status: 'error',
+                code: 404,
+                message: 'Such ID not found',
+            });
+        } else {
+            return res.json({
+                status: 'success',
+                code: 200,
+                data: {
+                    result,
+                },
+            });
+        }
+    } catch (e) {
+        console.error(e.message);
+        next(e);
+    }
+});
 
 router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+    try {
+        const result = await checkIdAvailiable(req);
+
+        const { contactId } = req.params;
+        const listAfterDeletion = await contacts.removeContact(contactId);
+
+        if (!result) {
+            res.json({
+                status: 'error',
+                code: 404,
+                message: 'Such ID not found',
+            });
+        } else {
+            return res.json({
+                status: 'success',
+                code: 200,
+                data: {
+                    listAfterDeletion,
+                },
+            });
+        }
+    } catch (e) {
+        console.error(e.message);
+        next(e);
+    }
+});
+
+router.post('/', async (req, res, next) => {
+    try {
+        const { name, email, phone } = req.body;
+
+        if (!name || !email || !phone) {
+            return res.json({
+                status: 'error',
+                code: 400,
+                message: 'Missing required field',
+            });
+        } else {
+            const result = await contacts.addContact(req.body);
+            return res.json({
+                status: 'success',
+                code: 201,
+                data: {
+                    result,
+                },
+            });
+        }
+    } catch (e) {
+        console.error(e.message);
+        next(e);
+    }
+});
 
 router.patch('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+    try {
+        const { contactId } = req.params;
+        const { name, email, phone } = req.body;
 
-module.exports = router
+        const result = await checkIdAvailiable(req);
+
+        if (!result) {
+            res.json({
+                status: 'error',
+                code: 404,
+                message: 'Such ID not found',
+            });
+        } else if (!name || !email || !phone) {
+            return res.json({
+                status: 'error',
+                code: 400,
+                message: 'Missing required field',
+            });
+        } else {
+            const listAfterUpdate = await contacts.updateContact(
+                contactId,
+                req.body
+            );
+
+            return res.json({
+                status: 'success',
+                code: 200,
+                data: {
+                    listAfterUpdate,
+                },
+            });
+        }
+    } catch (e) {
+        console.error(e.message);
+        next(e);
+    }
+});
+
+module.exports = router;
