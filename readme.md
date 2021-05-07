@@ -25,6 +25,8 @@
 -   `npm run lint` &mdash; запустить выполнение проверки кода с eslint, необходимо выполнять перед каждым PR и исправлять все ошибки линтера
 -   `npm lint:fix` &mdash; та же проверка линтера, но с автоматическими исправлениями простых ошибок
 
+### task-02:
+
 -   (GET), DELETE, PATCH - если такого id нет, возвращает json с ключом "message": "Not found" и статусом 404 => done!
 
 -   data validation: POST: name: number instead of "" - not ok; phone: "" instead of number - not ok; email checking - ok => need to use RegEx!
