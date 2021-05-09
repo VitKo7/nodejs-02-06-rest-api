@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const ctrlContacts = require('../controller/index');
+const ctrlContacts = require('../controller');
 
 router.get('/', ctrlContacts.get);
 
@@ -8,7 +8,9 @@ router.get('/:contactId', ctrlContacts.getById);
 
 router.post('/', ctrlContacts.create);
 
-router.patch('/:contactId', ctrlContacts.update);
+router.put('/:contactId', ctrlContacts.update);
+
+// router.patch('/:contactId/favorite', ctrlContacts.updateStatus);
 
 router.patch('/:contactId', ctrlContacts.updateStatus);
 

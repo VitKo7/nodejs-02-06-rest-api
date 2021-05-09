@@ -37,13 +37,25 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 const uriDb = process.env.DB_HOST;
 
-const connection = mongoose.connect(uriDb, {
-    promiseLibrary: global.Promise,
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true,
-    // useFindAndModify: false, // ! where & how to use?
-});
+const connection = mongoose.connect(
+    uriDb,
+    {
+        promiseLibrary: global.Promise,
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useUnifiedTopology: true,
+        useFindAndModify: false, // ! where & how to use?
+    }
+    // (error) => {
+    //     if (error) {
+    //         console.error('error :', error);
+    //         process.exit(1);
+    //     }
+    //     if (!error) {
+    //         console.log('Database connection successful!');
+    //     }
+    // }
+);
 
 // mongoose.disconnect(); // ! where & how to use?
 
@@ -51,6 +63,11 @@ connection
     .then(() => {
         app.listen(PORT, () => {
             console.log(`Server is running. API is used on port: ${PORT}`);
+            console.log('Database connection successful!'); // При успешном подключении выведите в консоль сообщение "Database connection successful".
         });
     })
-    .catch((error) => `Server is not running. Error message: ${error.message}`);
+    .catch((error) => {
+        `Server is not running. Error message: ${error.message}`;
+        console.error('error :', error);
+        process.exit(1);
+    }); // Обязательно обработайте ошибку подключения. Выведите в консоль сообщение ошибки и завершите процесс используя process.exit(1).
