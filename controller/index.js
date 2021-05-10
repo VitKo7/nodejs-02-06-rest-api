@@ -97,9 +97,13 @@ const updateStatus = async (req, res, next) => {
     const { contactId } = req.params;
     // const { name, phone, email, favorite } = req.body;
     const { favorite = false } = req.body;
+    const { children = false } = req.body;
 
     try {
-        const result = await service.updateContact(contactId, { favorite });
+        const result = await service.updateContact(contactId, {
+            favorite,
+            children,
+        });
 
         if (result) {
             res.status(200).json({

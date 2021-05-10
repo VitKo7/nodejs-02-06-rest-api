@@ -15,6 +15,10 @@ const contact = new Schema(
             maxlength: 70,
             unique: true,
             required: [true, 'Email is required'],
+            validate(value) {
+                const re = /\S+@\S+\.\S+/;
+                return re.test(String(value).toLowerCase());
+            },
         },
         phone: {
             type: String,
@@ -23,6 +27,22 @@ const contact = new Schema(
             required: [true, 'Phone is required'],
         },
         favorite: {
+            type: Boolean,
+            default: false,
+        },
+        age: {
+            type: Number,
+            min: 18,
+            max: 150,
+            required: [true, 'Age is required'],
+        },
+        experience: {
+            type: Number,
+            min: 0,
+            max: 100,
+            required: [true, 'Experience is required'],
+        },
+        children: {
             type: Boolean,
             default: false,
         },
