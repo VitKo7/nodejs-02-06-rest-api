@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
-const contactSchema = require('./contactSchema');
+const contactSchema = require('./schemas/contactSchema');
 
 // const contacts = require("./contacts.json"); // ! и как его использовать?
 

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const contacts = require('../../model/index');
+const contacts = require('../model/index');
 
 const checkIdAvailiable = async (req) => {
     const { contactId } = req.params;
@@ -32,10 +32,11 @@ router.get('/:contactId', async (req, res, next) => {
         const result = await checkIdAvailiable(req);
 
         if (!result) {
-            res.json({
+            res.status(404).json({
                 status: 'error',
                 code: 404,
-                message: 'Such ID not found',
+                message: `Contact with such ID: '${req.params.contactId}' not found`,
+                data: 'Not Found',
             });
         } else {
             return res.json({
@@ -60,10 +61,11 @@ router.delete('/:contactId', async (req, res, next) => {
         const listAfterDeletion = await contacts.removeContact(contactId);
 
         if (!result) {
-            res.json({
+            res.status(404).json({
                 status: 'error',
                 code: 404,
-                message: 'Such ID not found',
+                message: `Contact with such ID: '${req.params.contactId}' not found`,
+                data: 'Not Found',
             });
         } else {
             return res.json({
@@ -114,10 +116,11 @@ router.patch('/:contactId', async (req, res, next) => {
         const result = await checkIdAvailiable(req);
 
         if (!result) {
-            res.json({
+            res.status(404).json({
                 status: 'error',
                 code: 404,
-                message: 'Such ID not found',
+                message: `Contact with such ID: '${req.params.contactId}' not found`,
+                data: 'Not Found',
             });
         } else if (!name || !email || !phone) {
             return res.json({
