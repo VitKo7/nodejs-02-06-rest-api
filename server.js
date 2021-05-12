@@ -12,6 +12,8 @@ app.use(express.json());
 app.use(cors());
 app.use(logger(formatsLogger));
 
+require('./config/config-passport');
+
 const routerApi = require('./api');
 app.use('/api/contacts', routerApi);
 
@@ -19,7 +21,12 @@ app.use((_, res, __) => {
     res.status(404).json({
         status: 'error',
         code: 404,
-        message: 'Use api on routes: /api/contacts',
+        // message: 'Use api on routes: /api/contacts',
+        message: `Use api on routes: 
+            /api/contacts/signup - user registration {email, password}
+            /api/contacts/login - login {email, password}
+            /api/contacts/logout - user logout
+            /api/contacts/current - get message if user is authenticated`,
         data: 'Not found',
     });
 });
@@ -35,14 +42,14 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-const uriDb = process.env.DB_HOST;
+const { DB_HOST } = process.env;
 
-const connection = mongoose.connect(uriDb, {
+const connection = mongoose.connect(DB_HOST, {
     promiseLibrary: global.Promise,
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
-    useFindAndModify: false, // ! where & how to use?
+    useFindAndModify: false,
 });
 
 // mongoose.disconnect(); // ! where & how to use?
@@ -57,5 +64,5 @@ connection
     .catch((error) => {
         `Server is not running. Error message: ${error.message}`;
         console.error('error :', error);
-        process.exit(1); // to exit with a 'failure' code
+        process.exit(1); // to exit with a 'failure' code; Catchall для общих ошибок
     });
