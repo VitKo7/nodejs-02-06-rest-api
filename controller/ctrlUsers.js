@@ -89,7 +89,7 @@ const logout = async (req, res, next) => {
       { _id: id },
       { ...req.user.token, token: null },
       { new: true },
-    ); // * В модели User найти пользователя по _id & updateTokenForUser(id, null);
+    ); //  В модели User найти пользователя по _id & updateTokenForUser(id, null);
 
     res.json({
       status: 'success',
