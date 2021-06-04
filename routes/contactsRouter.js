@@ -4,7 +4,7 @@ const ctrlContacts = require('../controller/ctrlContacts');
 const {
   validateCreate,
   validateUpdate,
-} = require('../validation/contactsValidation');
+} = require('../middlewares/contactsValidation');
 const guard = require('../middlewares/guard');
 
 router

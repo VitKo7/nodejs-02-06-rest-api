@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const bCrypt = require('bcryptjs');
+const gravatar = require('gravatar');
 
 const userSchema = new Schema(
   {
@@ -48,14 +49,28 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
+
+    avatarURL: {
+      type: String,
+      default: function () {
+        return gravatar.url(this.email, {
+          protocol: 'http',
+          s: '100',
+          r: 'pg',
+          d: 'wavatar',
+        });
+      },
+    },
   },
   { versionKey: false, timestamps: true },
 );
 
+// засолка пароля
 userSchema.methods.setPassword = function (password) {
   this.password = bCrypt.hashSync(password, bCrypt.genSaltSync(6));
 };
 
+// валидация пароля, возвращает: true || false
 userSchema.methods.isValidPassword = async function (password) {
   return await bCrypt.compare(password, this.password);
 };

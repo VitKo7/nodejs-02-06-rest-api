@@ -20,7 +20,12 @@ const usersRouter = require('./routes/usersRouter');
 app.use('/api/contacts', contactsRouter);
 app.use('/api', usersRouter);
 
-app.use((_, res, __) => {
+app.use(express.static(`${__dirname}/public`));
+app.get('/', (req, res, next) => {
+  res.send('Home page');
+});
+
+app.use(function (req, res, next) {
   res.status(404).json({
     status: 'error',
     code: 404,
@@ -37,8 +42,10 @@ app.use((_, res, __) => {
 
 app.use((err, req, res, next) => {
   console.log(err.stack);
-  res.status(500).json({
-    status: 'fail',
+
+  res.status(err.status || 500);
+  res.json({
+    status: err.status,
     code: 500,
     message: err.message,
     data: 'Internal Server Error',
@@ -49,14 +56,13 @@ const PORT = process.env.PORT || 3000;
 const { DB_HOST } = process.env;
 
 const connection = mongoose.connect(DB_HOST, {
-  promiseLibrary: global.Promise,
+  promiseLibrary: global.Promise, // using Node.js' native promises in Mongoose 5 syntax,
+  //'mongoose.Promise = global.Promise' - syntax of Mongoose 4 was released before ES6, had its own promise implementation
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
 });
-
-// mongoose.disconnect(); // ! where & how to use?
 
 connection
   .then(() => {
