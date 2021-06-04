@@ -1,0 +1,4 @@
+function (error) {
+      if (error) throw error;
+      fs.readFileSync(filePath, 'utf8');
+    }
